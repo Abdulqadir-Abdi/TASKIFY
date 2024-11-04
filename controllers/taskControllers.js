@@ -17,5 +17,17 @@ exports.createTask = (req, res) => {
             }))
             return;
         }
+
+        const tasks = readTasksFromFile()
+        const newTask = {
+            id: Date.now(),
+            title: fields.title,
+            description: fields?.description || '',
+            status: fields?.status || 'pending',
+            image: image ? `/uploads/${image.originalFilename}` : null,
+        }
+        tasks.push(newTask);
+
+        
     })
 }
