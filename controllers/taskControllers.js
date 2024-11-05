@@ -28,6 +28,11 @@ exports.createTask = (req, res) => {
         }
         tasks.push(newTask);
 
-        
+        writeTasksToFile(tasks);
+
+        if(image) {
+            copyFileSync(image.filepath, path.join(__dirname, '../uploads', image.originalFilename));
+        }
+
     })
 }
