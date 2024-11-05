@@ -8,7 +8,7 @@ const PORT = 9000;
 // Create and configure server
 const server = http.createServer((req, res) => {
     if (req.url.startsWith('/tasks')) {
-        taskRoutesutes(req, res)
+        taskRoutes(req, res)
     } else {
         // Handle other endpoints (404 Not Found)
         res.writeHead(404, 'Not Found', { 'Content-Type': 'application/json' });

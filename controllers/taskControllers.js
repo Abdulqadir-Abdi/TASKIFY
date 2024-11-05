@@ -18,7 +18,10 @@ exports.createTask = (req, res) => {
             return;
         }
 
+        const image = files.image[0]
+
         const tasks = readTasksFromFile()
+
         const newTask = {
             id: Date.now(),
             title: fields.title,
