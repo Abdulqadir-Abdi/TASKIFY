@@ -72,5 +72,14 @@ exports.updateTask = (req, res) => {
             }))
             return;
         }
+        const updatedTask = {
+            ...tasks[taskIndex],
+            title: fields.title || tasks[taskIndex].title,
+            description: fields.description || tasks[taskIndex].description,
+            status: fields.status || tasks[taskIndex].status,
+            image: image ? `/uploads/${image.originalFilename}` : tasks[taskIndex].image,
+        }
+
+        tasks[taskIndex] = updatedTask;
     }
 }
