@@ -58,5 +58,19 @@ exports.updateTask = (req, res) => {
             }))
             return;
         }
+        const image = files.image ? files.image[0] : null;
+
+        const tasks = readTasksFromFile()
+
+        const taskId = parseInt(req.url.split('/').pop());
+        const taskIndex = tasks.findIndex(task => task.id === taskId);
+
+        if (taskIndex === -1) {
+            res.writeHead(404, { 'content-type': 'application/json'});
+            res.end(JSON.stringify({
+                message: 'Task not found'
+            }))
+            return;
+        }
     }
 }
