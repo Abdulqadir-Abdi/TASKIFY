@@ -51,5 +51,12 @@ exports.updateTask = (req, res) => {
             }))
             return;
         }
+        if (!fields.title) {
+            res.writeHead(400, { 'content-type': 'application/json'});
+            res.end(JSON.stringify({
+                message: 'Title is required'
+            }))
+            return;
+        }
     }
 }
