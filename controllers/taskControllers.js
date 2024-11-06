@@ -1,5 +1,7 @@
 const { IncomingForm } = require('formidable');
-const { readTasksFromFile } = require("../utils/fileHandler");
+const { readTasksFromFile, writeTasksToFile } = require("../utils/fileHandler");
+const { copyFileSync } = require('fs');
+const path = require('path');
 
 exports.getTasks = (req, res) => {
     const tasks = readTasksFromFile();
@@ -18,7 +20,15 @@ exports.createTask = (req, res) => {
             return;
         }
 
-        const image = files.image[0]
+        if (!fields.title) {
+            res.writeHead(400, { 'content-type': 'application/json'});
+            res.end(JSON.stringify({
+                message: 'Title is required'
+            }))
+            return;
+        }
+
+        const image = files.image ? files.image[0] : null;
 
         const tasks = readTasksFromFile()
 
@@ -29,15 +39,17 @@ exports.createTask = (req, res) => {
             status: fields?.status || 'pending',
             image: image ? `/uploads/${image.originalFilename}` : null,
         }
+
         tasks.push(newTask);
 
-        writeTasksToFigle(tasks);
+        writeTasksToFile(tasks);
 
         if(image) {
-             copyFileSync(image.filepath, path.join(__dirname, '../uploads', image.originalFilename));
-             res.end(JSON.stringify(newTask))
+            copyFileSync(image.filepath, path.join(__dirname, '../uploads', image.originalFilename));
         }
 
+        res.writeHead(200, { 'content-type': 'application/json'});
+        res.end(JSON.stringify(newTask))
     })
 }
 
@@ -51,6 +63,7 @@ exports.updateTask = (req, res) => {
             }))
             return;
         }
+
         if (!fields.title) {
             res.writeHead(400, { 'content-type': 'application/json'});
             res.end(JSON.stringify({
@@ -58,6 +71,7 @@ exports.updateTask = (req, res) => {
             }))
             return;
         }
+
         const image = files.image ? files.image[0] : null;
 
         const tasks = readTasksFromFile()
@@ -72,6 +86,7 @@ exports.updateTask = (req, res) => {
             }))
             return;
         }
+
         const updatedTask = {
             ...tasks[taskIndex],
             title: fields.title || tasks[taskIndex].title,
@@ -81,6 +96,7 @@ exports.updateTask = (req, res) => {
         }
 
         tasks[taskIndex] = updatedTask;
+
         writeTasksToFile(tasks);
 
         if(image) {
@@ -104,6 +120,7 @@ exports.deleteTask = (req, res) => {
         }))
         return;
     }
+
     const updatedTasks = tasks.filter(task => task.id !== taskId);
     writeTasksToFile(updatedTasks);
     res.writeHead(200, { 'content-type': 'application/json' });
@@ -111,5 +128,3 @@ exports.deleteTask = (req, res) => {
         message: 'Task successfully deleted'
     }));
 }
- 
-
